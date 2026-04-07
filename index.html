@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spectrum — Self-Assessment</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Fraunces:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+/* ─── RESET ─── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+
+/* ─── VARIABLES ─── */
+:root{
+  --bg:#F5F1E8;
+  --surface:#FFFFFF;
+  --primary:#3D6B6B;
+  --primary-hover:#2E5353;
+  --primary-pale:rgba(61,107,107,0.08);
+  --accent:#D97A50;
+  --text:#1C1C2E;
+  --muted:#6B6B85;
+  --border:#E2DDD4;
+  --green:#3DA870;
+  --amber:#D4920A;
+  --red:#C94040;
+  --radius:20px;
+  --radius-sm:12px;
+  --shadow:0 8px 40px rgba(0,0,0,0.10);
+  --shadow-sm:0 2px 12px rgba(0,0,0,0.06);
+}
+
+/* ─── BASE ─── */
+body{
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+  padding:32px 16px 60px;
+}
+
+.app{width:100%;max-width:660px}
+
+/* ─── SCREENS ─── */
+.screen{display:none;animation:rise .4s ease both}
+.screen.active{display:block}
+@keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+/* ─── CARD ─── */
+.card{
+  background:var(--surface);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  padding:52px;
+}
+@media(max-width:560px){.card{padding:32px 24px}}
+
+/* ─── TYPE ─── */
+.eyebrow{
+  font-size:11px;font-weight:600;letter-spacing:1.4px;
+  text-transform:uppercase;color:var(--primary);margin-bottom:14px;
+}
+h1.serif{
+  font-family:'Fraunces',Georgia,serif;
+  font-size:38px;font-weight:600;line-height:1.15;
+  color:var(--text);margin-bottom:18px;
+}
+@media(max-width:560px){h1.serif{font-size:28px}}
+p.lead{font-size:16px;line-height:1.75;color:var(--muted)}
+p.lead+p.lead{margin-top:12px}
+strong{color:var(--text)}
+
+/* ─── BUTTONS ─── */
+.btn{
+  display:inline-flex;align-items:center;gap:9px;
+  background:var(--primary);color:#fff;
+  border:none;border-radius:var(--radius-sm);
+  padding:17px 28px;font-size:16px;font-weight:500;
+  cursor:pointer;transition:all .2s;font-family:inherit;
+  text-decoration:none;line-height:1;
+}
+.btn:hover{background:var(--primary-hover);transform:translateY(-1px);box-shadow:0 4px 20px rgba(61,107,107,.3)}
+.btn:active{transform:translateY(0)}
+.btn-full{width:100%;justify-content:center}
+.btn-ghost{
+  background:none;border:2px solid var(--border);
+  color:var(--muted);
+}
+.btn-ghost:hover{border-color:var(--primary);color:var(--primary);background:var(--primary-pale);box-shadow:none}
+
+/* ─── INTRO ─── */
+.intro-mark{
+  width:56px;height:56px;background:var(--primary-pale);
+  border-radius:50%;display:flex;align-items:center;
+  justify-content:center;margin-bottom:28px;
+}
+.intro-grid{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:12px;margin:32px 0 36px;
+}
+.intro-tile{
+  background:var(--bg);border-radius:var(--radius-sm);
+  padding:18px;
+}
+.intro-tile strong{display:block;font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px}
+.intro-tile span{font-size:13px;color:var(--muted);line-height:1.5}
+@media(max-width:440px){.intro-grid{grid-template-columns:1fr}}
+
+/* ─── CONSENT ─── */
+.field{margin-bottom:22px}
+.field-label{display:block;font-size:14px;font-weight:500;color:var(--text);margin-bottom:8px}
+.field-input{
+  width:100%;padding:15px 16px;
+  border:2px solid var(--border);border-radius:var(--radius-sm);
+  font-size:16px;font-family:inherit;color:var(--text);
+  background:#fff;transition:border-color .2s;
+  -webkit-appearance:none;appearance:none;
+}
+.field-input:focus{outline:none;border-color:var(--primary)}
+.field-input.has-error{border-color:var(--red)}
+.field-err{font-size:13px;color:var(--red);margin-top:6px;display:none}
+.field-err.show{display:block}
+
+.consent-row{
+  display:flex;align-items:flex-start;gap:14px;
+  background:var(--bg);border:2px solid var(--border);
+  border-radius:var(--radius-sm);padding:20px;
+  cursor:pointer;transition:border-color .2s;
+  margin:28px 0 8px;
+}
+.consent-row:hover{border-color:var(--primary)}
+.consent-row.on{border-color:var(--primary);background:var(--primary-pale)}
+.cb-box{
+  width:22px;height:22px;flex-shrink:0;margin-top:1px;
+  border:2px solid var(--border);border-radius:6px;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .2s;
+}
+.consent-row.on .cb-box{background:var(--primary);border-color:var(--primary)}
+.cb-check{display:none}
+.consent-row.on .cb-check{display:block}
+.consent-copy{font-size:14px;line-height:1.65;color:var(--muted)}
+
+/* ─── QUIZ ─── */
+.quiz-top{margin-bottom:36px}
+.prog-track{
+  background:var(--border);border-radius:100px;
+  height:5px;width:100%;overflow:hidden;margin-bottom:10px;
+}
+.prog-fill{
+  height:100%;background:var(--primary);
+  border-radius:100px;transition:width .5s ease;
+}
+.prog-meta{display:flex;justify-content:space-between;align-items:center;min-height:20px}
+.prog-label{font-size:13px;font-weight:500;color:var(--muted)}
+.prog-note{font-size:13px;font-weight:500;color:var(--primary);opacity:0;transition:opacity .4s}
+.prog-note.show{opacity:1}
+
+.q-text{
+  font-family:'Fraunces',Georgia,serif;font-style:italic;
+  font-size:22px;line-height:1.5;color:var(--text);
+  margin-bottom:32px;font-weight:400;
+}
+@media(max-width:560px){.q-text{font-size:19px}}
+
+.answers{display:flex;flex-direction:column;gap:10px;margin-bottom:32px}
+.ans-btn{
+  width:100%;padding:17px 20px;
+  background:#fff;border:2px solid var(--border);border-radius:var(--radius-sm);
+  text-align:left;cursor:pointer;
+  font-family:inherit;font-size:15px;color:var(--muted);
+  display:flex;align-items:center;gap:14px;
+  transition:all .2s;line-height:1.4;
+}
+.ans-btn:hover{border-color:var(--primary);background:var(--primary-pale);color:var(--text)}
+.ans-btn.picked{border-color:var(--primary);background:var(--primary-pale);color:var(--text);font-weight:500}
+.ans-dot{
+  width:18px;height:18px;border-radius:50%;border:2px solid currentColor;
+  flex-shrink:0;display:flex;align-items:center;justify-content:center;
+  transition:all .2s;
+}
+.ans-btn.picked .ans-dot{background:var(--primary);border-color:var(--primary)}
+.ans-btn.picked .ans-dot::after{content:'';width:6px;height:6px;background:#fff;border-radius:50%}
+
+.quiz-nav{display:flex;justify-content:space-between;align-items:center}
+.back-btn{
+  background:none;border:none;color:var(--muted);
+  cursor:pointer;font-family:inherit;font-size:14px;
+  display:flex;align-items:center;gap:6px;padding:8px 0;
+  transition:color .2s;
+}
+.back-btn:hover{color:var(--text)}
+.back-btn:disabled{opacity:0;pointer-events:none}
+.next-btn{opacity:.35;pointer-events:none;transition:opacity .2s}
+.next-btn.ready{opacity:1;pointer-events:auto}
+
+/* ─── RESULTS ─── */
+.result-tag{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:7px 15px;border-radius:100px;font-size:11px;
+  font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  margin-bottom:22px;
+}
+.tag-green{background:rgba(61,168,112,.12);color:#1E7A45}
+.tag-amber{background:rgba(212,146,10,.12);color:#8A5E00}
+.tag-orange{background:rgba(217,122,80,.12);color:#9A3D10}
+.tag-red{background:rgba(201,64,64,.12);color:#8A1A1A}
+
+.result-name{
+  font-family:'Fraunces',Georgia,serif;
+  font-size:28px;font-weight:600;line-height:1.2;
+  color:var(--text);margin-bottom:10px;
+}
+.result-headline{
+  font-family:'Fraunces',Georgia,serif;
+  font-size:20px;font-weight:400;font-style:italic;
+  line-height:1.45;color:var(--text);margin-bottom:14px;
+}
+.result-intro{
+  font-size:15px;line-height:1.75;color:var(--muted);
+  padding-bottom:34px;border-bottom:1px solid var(--border);margin-bottom:34px;
+}
+
+/* Domain bars */
+.domains{margin-bottom:34px}
+.domains-title{
+  font-size:11px;font-weight:600;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--muted);margin-bottom:22px;
+}
+.domain-row{margin-bottom:20px}
+.domain-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
+.domain-name{font-size:14px;font-weight:500;color:var(--text)}
+.domain-val{font-size:13px;font-weight:500;color:var(--muted)}
+.domain-track{background:var(--bg);border-radius:100px;height:10px;overflow:hidden}
+.domain-fill{height:100%;border-radius:100px;width:0;transition:width 1.1s cubic-bezier(.4,0,.2,1) .2s}
+.fill-green{background:var(--green)}
+.fill-amber{background:var(--amber)}
+.fill-red{background:var(--red)}
+.domain-sub{font-size:12px;color:var(--muted);margin-top:5px;line-height:1.4}
+
+/* Interpretation block */
+.interp{background:var(--bg);border-radius:var(--radius);padding:28px;margin-bottom:26px}
+.interp h3{font-size:15px;font-weight:600;color:var(--text);margin-bottom:10px}
+.interp p{font-size:14px;line-height:1.75;color:var(--muted)}
+
+/* Masking callout */
+.masking{
+  border-left:3px solid var(--accent);
+  padding:20px 24px;margin-bottom:26px;
+  background:rgba(217,122,80,.06);
+  border-radius:0 var(--radius-sm) var(--radius-sm) 0;
+}
+.masking h4{font-size:13px;font-weight:700;letter-spacing:.4px;color:var(--accent);margin-bottom:8px;text-transform:uppercase}
+.masking p{font-size:14px;line-height:1.7;color:var(--muted)}
+
+/* Next steps */
+.steps{margin-bottom:36px}
+.steps h3{font-size:15px;font-weight:600;color:var(--text);margin-bottom:16px}
+.step{display:flex;gap:14px;padding:15px 0;border-bottom:1px solid var(--border)}
+.step:last-child{border-bottom:none}
+.step-n{
+  width:27px;height:27px;background:var(--primary-pale);
+  border-radius:50%;display:flex;align-items:center;
+  justify-content:center;font-size:12px;font-weight:700;
+  color:var(--primary);flex-shrink:0;margin-top:1px;
+}
+.step-t{font-size:14px;line-height:1.7;color:var(--muted)}
+
+/* Disclaimer */
+.disc{
+  font-size:12px;color:var(--muted);line-height:1.7;
+  padding-top:22px;border-top:1px solid var(--border);opacity:.65;
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ══════════════════════════════════
+     SCREEN 1 · INTRO
+══════════════════════════════════ -->
+<div id="s-intro" class="screen active">
+<div class="card">
+  <div class="intro-mark">
+    <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
+      <circle cx="13" cy="13" r="11" stroke="#3D6B6B" stroke-width="2"/>
+      <circle cx="13" cy="13" r="6" fill="#3D6B6B" fill-opacity=".2"/>
+      <circle cx="13" cy="13" r="2" fill="#3D6B6B"/>
+    </svg>
+  </div>
+  <div class="eyebrow">Self-Assessment Tool</div>
+  <h1 class="serif">Understand yourself<br>a little better.</h1>
+  <p class="lead">This is a 30-question screening tool built on current clinical research. There are no trick questions — just answer as honestly as you can, based on how you <em>generally</em> are, not how you wish you were.</p>
+  <p class="lead" style="margin-top:12px">It is <strong>not a diagnosis</strong>. It's a starting point for self-understanding, and for conversations with professionals if you choose to have them.</p>
+
+  <div class="intro-grid">
+    <div class="intro-tile">
+      <strong>30 questions</strong>
+      <span>Around 10–15 minutes</span>
+    </div>
+    <div class="intro-tile">
+      <strong>No right answers</strong>
+      <span>Every response is valid</span>
+    </div>
+    <div class="intro-tile">
+      <strong>Research-based</strong>
+      <span>Built on DSM-5 &amp; validated scales</span>
+    </div>
+    <div class="intro-tile">
+      <strong>Confidential</strong>
+      <span>Anonymous research use only</span>
+    </div>
+  </div>
+
+  <button class="btn btn-full" onclick="go('consent')">
+    Begin assessment
+    <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M2 7.5h11M9 3.5l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+</div>
+</div>
+
+<!-- ══════════════════════════════════
+     SCREEN 2 · CONSENT
+══════════════════════════════════ -->
+<div id="s-consent" class="screen">
+<div class="card">
+  <div class="eyebrow">Before we begin</div>
+  <h1 class="serif" style="font-size:28px;margin-bottom:10px">A few quick details</h1>
+  <p class="lead" style="margin-bottom:32px">These help us understand patterns across people who take this assessment. Your first name is fine.</p>
+
+  <div class="field">
+    <label class="field-label" for="f-name">Your name</label>
+    <input class="field-input" id="f-name" type="text" placeholder="First name is fine" autocomplete="given-name">
+    <div class="field-err" id="e-name">Please enter your name.</div>
+  </div>
+
+  <div class="field">
+    <label class="field-label" for="f-age">Your age</label>
+    <input class="field-input" id="f-age" type="number" placeholder="e.g. 28" min="13" max="99">
+    <div class="field-err" id="e-age">Please enter a valid age (13–99).</div>
+  </div>
+
+  <div class="consent-row" id="consent-row" onclick="toggleConsent()">
+    <div class="cb-box" id="cb-box">
+      <svg class="cb-check" width="12" height="9" viewBox="0 0 12 9" fill="none">
+        <path d="M1 4.5l3 3L11 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <p class="consent-copy">I understand this is a <strong>screening tool, not a medical diagnosis</strong>. I consent to my name, age, and approximate location being stored anonymously for research purposes.</p>
+  </div>
+  <div class="field-err" id="e-consent" style="margin-bottom:20px">You must agree to continue.</div>
+
+  <button class="btn btn-full" onclick="startTest()" style="margin-top:8px">
+    Start assessment
+    <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M2 7.5h11M9 3.5l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+</div>
+</div>
+
+<!-- ══════════════════════════════════
+     SCREEN 3 · QUIZ
+══════════════════════════════════ -->
+<div id="s-quiz" class="screen">
+<div class="card">
+  <div class="quiz-top">
+    <div class="prog-track">
+      <div class="prog-fill" id="prog-fill" style="width:0%"></div>
+    </div>
+    <div class="prog-meta">
+      <span class="prog-label" id="prog-label">Question 1 of 30</span>
+      <span class="prog-note" id="prog-note"></span>
+    </div>
+  </div>
+
+  <p class="q-text" id="q-text"></p>
+
+  <div class="answers" id="answers"></div>
+
+  <div class="quiz-nav">
+    <button class="back-btn" id="back-btn" onclick="prevQ()" disabled>
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M12 7H2M6 11L2 7l4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Back
+    </button>
+    <button class="btn next-btn" id="next-btn" onclick="nextQ()">
+      Next
+      <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M2 7.5h11M9 3.5l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════
+     SCREEN 4 · RESULTS
+══════════════════════════════════ -->
+<div id="s-results" class="screen">
+<div class="card">
+  <div id="results-body"></div>
+</div>
+</div>
+
+</div><!-- /.app -->
+
+<script>
+/* ═══════════════════════════════════════
+   CONFIG  — paste your Apps Script URL here
+═══════════════════════════════════════ */
+const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbwvAyGzz63WMk3TJOq1cVNV7SBWuC1ZGto-lTyWYIQplwxubuAhbXwP62BXzDhlcaYqTA/exec';
+
+/* ═══════════════════════════════════════
+   QUESTIONS
+   domain A = Social Communication  (max 36)
+   domain B = Repetitive/Rigid      (max 24)
+   domain C = Sensory               (max 18)
+   domain D = Masking               (max 12)
+   reverse:true  →  score = 3 - raw answer value
+═══════════════════════════════════════ */
+const QS = [
+  // ── Domain A ──
+  {id:1,  d:'A', r:false, t:"When I'm in a conversation, I sometimes miss what the other person is really trying to say."},
+  {id:2,  d:'A', r:true,  t:"I find it easy to hold a conversation with someone I've just met."},
+  {id:3,  d:'A', r:false, t:"I often feel unsure how to respond when someone shares unexpected personal news with me."},
+  {id:4,  d:'A', r:true,  t:"I can usually tell when someone wants to change the subject, even without them saying so."},
+  {id:5,  d:'A', r:false, t:"I sometimes say things others find blunt or rude, even though I didn't intend to be."},
+  {id:6,  d:'A', r:false, t:"I find it harder to follow a conversation when more than two people are involved."},
+  {id:7,  d:'A', r:true,  t:"I find it easy to imagine how a situation feels from another person's point of view."},
+  {id:8,  d:'A', r:true,  t:"I notice when someone's tone of voice doesn't match what they're actually saying."},
+  {id:9,  d:'A', r:true,  t:"Making casual conversation with people I don't know well feels natural to me."},
+  {id:10, d:'A', r:false, t:"I often replay conversations in my head afterward, wondering if I said the right thing."},
+  {id:11, d:'A', r:true,  t:"I find it easy to join in when a group of people are already talking or doing something together."},
+  {id:12, d:'A', r:false, t:"I prefer written communication over talking in person or on the phone."},
+  // ── Domain B ──
+  {id:13, d:'B', r:false, t:"Unexpected changes to plans make me feel stressed, even if the change turns out fine."},
+  {id:14, d:'B', r:false, t:"I prefer to follow a set routine and find it unsettling when it's disrupted."},
+  {id:15, d:'B', r:true,  t:"I find it easy to shift my attention from one task to another without losing focus."},
+  {id:16, d:'B', r:false, t:"I have one or more interests that I focus on much more deeply than most people would."},
+  {id:17, d:'B', r:false, t:"When I find a topic interesting, I want to learn everything there is to know about it."},
+  {id:18, d:'B', r:false, t:"I notice myself doing repetitive movements or actions — like tapping, rocking, or pacing — especially when thinking or stressed."},
+  {id:19, d:'B', r:false, t:"I like to have my belongings or personal space arranged in a particular way."},
+  {id:20, d:'B', r:false, t:"I find it difficult to stop a task until it feels exactly right, even if 'good enough' would do."},
+  // ── Domain C ──
+  {id:21, d:'C', r:false, t:"Certain fabrics or clothing textures feel physically uncomfortable to me."},
+  {id:22, d:'C', r:false, t:"Loud or sudden noises bother me more than they seem to bother other people."},
+  {id:23, d:'C', r:false, t:"Bright or flickering lights make it harder for me to think or concentrate."},
+  {id:24, d:'C', r:false, t:"I notice smells that others around me don't seem to react to."},
+  {id:25, d:'C', r:false, t:"Visually busy environments — like crowded shops or cluttered rooms — make me uncomfortable."},
+  {id:26, d:'C', r:false, t:"I find certain food textures difficult to eat, regardless of the taste."},
+  // ── Domain D ──
+  {id:27, d:'D', r:false, t:"I've developed strategies to help me appear more comfortable in social situations than I actually am."},
+  {id:28, d:'D', r:false, t:"I observe how other people behave socially and use what I learn to guide my own behaviour."},
+  {id:29, d:'D', r:false, t:"I often feel drained or exhausted after spending time with others, even if I enjoyed it."},
+  {id:30, d:'D', r:false, t:"In social situations, I sometimes feel like I'm performing a role rather than being myself."},
+];
+
+const OPTS = [
+  "This is definitely not like me",
+  "This is mostly not like me",
+  "This is mostly like me",
+  "This is definitely like me",
+];
+
+/* ═══════════════════════════════════════
+   STATE
+═══════════════════════════════════════ */
+const S = {
+  name:'', age:'',
+  ip:{ip:'',city:'',region:'',country:''},
+  deck:[],       // shuffled questions
+  ans:[],        // selected answer per question (0–3 or null)
+  cur:0,         // current question index
+  consented:false,
+};
+
+/* ═══════════════════════════════════════
+   SCREEN ROUTING
+═══════════════════════════════════════ */
+function go(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('s-'+id).classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ═══════════════════════════════════════
+   CONSENT TOGGLE
+═══════════════════════════════════════ */
+function toggleConsent(){
+  S.consented=!S.consented;
+  document.getElementById('consent-row').classList.toggle('on',S.consented);
+}
+
+/* ═══════════════════════════════════════
+   FORM VALIDATION & START
+═══════════════════════════════════════ */
+function startTest(){
+  const name=document.getElementById('f-name').value.trim();
+  const age=parseInt(document.getElementById('f-age').value);
+  let ok=true;
+
+  setErr('f-name','e-name',!name,'Please enter your name.');
+  if(!name) ok=false;
+
+  setErr('f-age','e-age',(!age||age<13||age>99),'Please enter a valid age (13–99).');
+  if(!age||age<13||age>99) ok=false;
+
+  const ce=document.getElementById('e-consent');
+  if(!S.consented){ce.classList.add('show');ok=false;}else{ce.classList.remove('show');}
+
+  if(!ok) return;
+
+  S.name=name; S.age=age;
+  S.ans=new Array(QS.length).fill(null);
+  S.deck=shuffle([...QS]);
+  S.cur=0;
+
+  go('quiz');
+  render();
+}
+
+function setErr(inputId,errId,show,msg){
+  const inp=document.getElementById(inputId);
+  const err=document.getElementById(errId);
+  inp.classList.toggle('has-error',show);
+  err.textContent=msg;
+  err.classList.toggle('show',show);
+}
+
+/* ═══════════════════════════════════════
+   QUIZ RENDER
+═══════════════════════════════════════ */
+const MILESTONES={
+  9:"A third of the way there — keep going.",
+  19:"Halfway done. You're doing great.",
+  24:"Just 6 questions left.",
+  29:"Last one!",
+};
+
+function render(){
+  const q=S.deck[S.cur];
+  const total=QS.length;
+  const pct=Math.round((S.cur/total)*100);
+
+  document.getElementById('prog-fill').style.width=pct+'%';
+  document.getElementById('prog-label').textContent=`Question ${S.cur+1} of ${total}`;
+
+  const noteEl=document.getElementById('prog-note');
+  if(MILESTONES[S.cur]){
+    noteEl.textContent=MILESTONES[S.cur];
+    noteEl.classList.add('show');
+    clearTimeout(noteEl._t);
+    noteEl._t=setTimeout(()=>noteEl.classList.remove('show'),4500);
+  }
+
+  document.getElementById('q-text').textContent=`"${q.t}"`;
+
+  const wrap=document.getElementById('answers');
+  wrap.innerHTML='';
+  OPTS.forEach((label,i)=>{
+    const btn=document.createElement('button');
+    btn.className='ans-btn'+(S.ans[S.cur]===i?' picked':'');
+    btn.innerHTML=`<span class="ans-dot"></span>${label}`;
+    btn.onclick=()=>pick(i);
+    wrap.appendChild(btn);
+  });
+
+  document.getElementById('back-btn').disabled=(S.cur===0);
+  syncNext();
+}
+
+function pick(val){
+  S.ans[S.cur]=val;
+  document.querySelectorAll('.ans-btn').forEach((b,i)=>b.classList.toggle('picked',i===val));
+  syncNext();
+  // auto-advance after brief pause
+  clearTimeout(pick._t);
+  pick._t=setTimeout(()=>{ if(S.ans[S.cur]!==null) nextQ(); },520);
+}
+
+function syncNext(){
+  document.getElementById('next-btn').classList.toggle('ready',S.ans[S.cur]!==null);
+}
+
+function nextQ(){
+  if(S.ans[S.cur]===null) return;
+  if(S.cur<QS.length-1){S.cur++;render();}
+  else showResults();
+}
+
+function prevQ(){
+  if(S.cur>0){S.cur--;render();}
+}
+
+/* ═══════════════════════════════════════
+   SCORING
+═══════════════════════════════════════ */
+function score(){
+  const sc={A:0,B:0,C:0,D:0};
+  S.deck.forEach((q,i)=>{
+    const raw=S.ans[i];
+    sc[q.d]+= q.r ? (3-raw) : raw;
+  });
+  return sc;
+}
+
+function group(sc){
+  const A=sc.A, B=sc.B, D=sc.D;
+  const Al=A<12, Am=A>=12&&A<=22, Ah=A>=23;
+  const Bl=B<8,  Bm=B>=8 &&B<=14, Bh=B>=15;
+  const mask=D>=5;
+  let g;
+  if(Al&&Bl)          g=1;
+  else if((Am||Ah)&&Bl) g=2;
+  else if(Al&&(Bm||Bh)) g=3;
+  else if(Am&&Bm)     g=4;
+  else if((Ah&&Bm)||(Am&&Bh)) g=5;
+  else                g=6;
+  return {g, mask};
+}
+
+/* ═══════════════════════════════════════
+   RESULT CONTENT
+═══════════════════════════════════════ */
+const RESULTS={
+  1:{
+    tag:'tag-green', tagTxt:'Few traits detected',
+    headline:"Your responses don't suggest a strong autism trait profile.",
+    body:`Across the areas this assessment measures — social communication, repetitive patterns, and sensory sensitivity — your responses sit mostly in the typical range. This doesn't mean your experiences aren't real or valid; it simply means they don't cluster in the way autism traits tend to. If you still feel something is off, speaking with a psychologist is always worthwhile. Conditions such as ADHD, anxiety, or sensory processing differences can overlap with some of these areas and are worth exploring.`,
+    steps:["If lingering concerns remain, speak with your GP or a psychologist — not necessarily looking for a specific diagnosis, but to get a clearer picture.","Anxiety and ADHD can produce traits that overlap with some autism characteristics. A professional can help untangle these.","Self-knowledge is always valuable. Consider noting which specific situations feel persistently difficult."],
+  },
+  2:{
+    tag:'tag-amber', tagTxt:'Social differences present',
+    headline:"You show meaningful differences in social communication, but without strong repetitive traits.",
+    body:`Your responses suggest real differences in how you navigate social situations — reading between the lines, joining in with groups, knowing what to say. However, your responses around routines, intense interests, and repetitive behaviors sit in the typical range. This is an important distinction: DSM-5 requires both social differences and repetitive behaviors for an autism diagnosis. What you're describing may relate to social anxiety, ADHD, depression, or a range of other conditions. A professional evaluation would give you much more clarity.`,
+    steps:["Speak with a psychologist or psychiatrist who can assess social anxiety, ADHD, and autism as part of a wider evaluation.","Social communication difficulties are real and affect quality of life — they deserve professional attention regardless of the cause.","Track specific situations that feel hard. Concrete examples are useful in any clinical conversation."],
+  },
+  3:{
+    tag:'tag-amber', tagTxt:'Repetitive & sensory traits present',
+    headline:"You show sensory sensitivities and repetitive patterns, but fewer social differences.",
+    body:`Your responses highlight sensory sensitivities and repetitive patterns, while your social communication appears more typical. Sensory processing differences and strong routines can appear in ADHD, OCD, sensory processing disorder, and sometimes autism — particularly in people who have developed strong social skills that compensate for other differences. A professional assessment would help clarify what's driving these experiences for you.`,
+    steps:["Speak with a professional experienced in both ADHD and autism — the two frequently co-occur and share a number of traits.","Sensory sensitivities can be addressed regardless of diagnosis, through occupational therapy and targeted strategies.","Consider whether you've developed social habits that may be masking other differences."],
+  },
+  4:{
+    tag:'tag-amber', tagTxt:'Moderate autism-consistent traits',
+    headline:"Your responses show traits in both core areas associated with autism.",
+    body:`Both the social communication domain and the repetitive/restrictive behavior domain returned moderate scores. These are the two areas clinicians assess when evaluating autism, and elevation in both is meaningful. This does not mean you are autistic — many conditions overlap in these areas, and only a qualified professional can make that determination. What it does suggest is that a formal evaluation would be a genuinely useful step, and that your experiences are worth taking seriously.`,
+    steps:["Seek a formal assessment from a psychologist or psychiatrist who specialises in autism in adults. Be specific when making the referral.","Bring this result to your GP as a starting point. It won't be used diagnostically but can help explain why you're seeking assessment.","Be aware that waiting times for autism assessment vary widely — starting the process early is worthwhile."],
+  },
+  5:{
+    tag:'tag-orange', tagTxt:'Significant autism-consistent traits',
+    headline:"Your responses are notably consistent with an autism spectrum profile.",
+    body:`Your scores in social communication and repetitive/restrictive behavior are both significantly elevated. Across the questions in this assessment — which reflect the areas clinicians examine — your responses show a consistent pattern strongly associated with the autism spectrum. This is not a diagnosis. Only a qualified professional can provide that. But your responses are a clear signal that formal evaluation is worth pursuing, and that what you're experiencing is real and significant.`,
+    steps:["Seek a formal autism assessment. Ask your GP for a referral to a specialist in adult autism, or consider a private assessment if NHS or public waiting times are long.","Prepare for assessment by noting specific examples: situations that are hard, strategies you use, things that have always felt different.","Look into support communities for autistic adults — many people find community and recognition valuable even before a formal diagnosis."],
+  },
+  6:{
+    tag:'tag-red', tagTxt:'Strong autism-consistent trait profile',
+    headline:"Your responses show a strong and consistent autism trait profile across all domains.",
+    body:`Across every domain in this assessment — social communication, repetitive and restrictive behaviors, sensory processing, and camouflaging — your responses show a strong and consistent pattern. We want to be clear: no website can tell you whether you are autistic, and this is a screening tool, not a diagnosis. What we can say is that your responses are strongly consistent with how autistic adults describe their own experiences, and that a formal clinical evaluation is strongly recommended.`,
+    steps:["Pursue a formal autism assessment as a priority. Contact your GP, or reach out to an autism assessment service directly.","Your broad profile — elevated across all domains including sensory processing — is something a specialist will want to explore thoroughly.","Connect with autistic adult communities for peer support and to learn how others have navigated the diagnostic process."],
+  },
+};
+
+/* ═══════════════════════════════════════
+   SHOW RESULTS
+═══════════════════════════════════════ */
+function showResults(){
+  go('results');
+
+  const sc=score();
+  const {g,mask}=group(sc);
+  const R=RESULTS[g];
+  const nm=S.name||'Your';
+  const nameLabel=S.name ? S.name+"'s results" : "Your results";
+
+  const maxes={A:36,B:24,C:18,D:12};
+  const domainDefs=[
+    {k:'A',label:'Social Communication',      sub:'How you interpret and engage in social situations'},
+    {k:'B',label:'Repetitive Behaviors & Routines', sub:'Rigidity, routines, and depth of focused interests'},
+    {k:'C',label:'Sensory Processing',         sub:'Sensitivity to light, sound, texture, and smell'},
+    {k:'D',label:'Camouflaging',               sub:'Adapting or masking your natural behaviour socially'},
+  ];
+
+  const bars=domainDefs.map(d=>{
+    const val=sc[d.k], mx=maxes[d.k];
+    const pct=Math.round((val/mx)*100);
+    const cls=pct<40?'fill-green':pct<65?'fill-amber':'fill-red';
+    return `
+      <div class="domain-row">
+        <div class="domain-top">
+          <span class="domain-name">${d.label}</span>
+          <span class="domain-val">${val} / ${mx}</span>
+        </div>
+        <div class="domain-track">
+          <div class="domain-fill ${cls}" data-w="${pct}"></div>
+        </div>
+        <div class="domain-sub">${d.sub}</div>
+      </div>`;
+  }).join('');
+
+  const steps=R.steps.map((s,i)=>`
+    <div class="step">
+      <div class="step-n">${i+1}</div>
+      <div class="step-t">${s}</div>
+    </div>`).join('');
+
+  const maskBlock=mask?`
+    <div class="masking">
+      <h4>Note on camouflaging</h4>
+      <p>Your responses suggest you may be actively masking or camouflaging your traits in social situations. This is common — particularly among women, non-binary people, and those diagnosed later in life. Camouflaging can suppress scores on autism assessments, including this one. If your overall scores feel lower than your lived experience suggests, masking may be a factor worth raising with a clinician.</p>
+    </div>`:''
+
+  document.getElementById('results-body').innerHTML=`
+    <span class="result-tag ${R.tag}">${R.tagTxt}</span>
+    <div class="result-name">${nameLabel}</div>
+    <div class="result-headline">${R.headline}</div>
+    <p class="result-intro">${R.body}</p>
+
+    <div class="domains">
+      <div class="domains-title">Score breakdown</div>
+      ${bars}
+    </div>
+
+    ${maskBlock}
+
+    <div class="steps">
+      <h3>What to do next</h3>
+      ${steps}
+    </div>
+
+    <p class="disc">This tool draws on validated clinical screening instruments including the Autism Spectrum Quotient (AQ), the RAADS-R, and the Camouflaging Autistic Traits Questionnaire (CAT-Q). It is a screening tool only and <strong>cannot diagnose autism or any other condition</strong>. Only a qualified clinical professional — a psychologist or psychiatrist — can provide a diagnosis. If you are concerned about your mental health, please speak with your GP or a qualified healthcare provider.</p>
+  `;
+
+  // Animate bars after paint
+  requestAnimationFrame(()=>{
+    setTimeout(()=>{
+      document.querySelectorAll('.domain-fill').forEach(el=>{
+        el.style.width=el.dataset.w+'%';
+      });
+    },150);
+  });
+
+  // Submit data
+  submitData(sc,g,mask);
+}
+
+/* ═══════════════════════════════════════
+   GOOGLE SHEETS SUBMISSION
+═══════════════════════════════════════ */
+async function submitData(sc,g,mask){
+  if(!SHEETS_URL||SHEETS_URL==='YOUR_APPS_SCRIPT_URL_HERE') return;
+  try{
+    const body=new URLSearchParams({
+      name:S.name, age:S.age,
+      ip:S.ip.ip||'', city:S.ip.city||'',
+      region:S.ip.region||'', country:S.ip.country||'',
+      scoreA:sc.A, scoreB:sc.B, scoreC:sc.C, scoreD:sc.D,
+      resultGroup:g, maskingFlag:mask?'Yes':'No',
+    });
+    await fetch(SHEETS_URL,{method:'POST',mode:'no-cors',body});
+  }catch(e){console.warn('Sheets submit failed',e)}
+}
+
+/* ═══════════════════════════════════════
+   IP FETCH  (runs on page load)
+═══════════════════════════════════════ */
+(async()=>{
+  try{
+    const r=await fetch('https://ipapi.co/json/');
+    const d=await r.json();
+    S.ip={ip:d.ip||'',city:d.city||'',region:d.region||'',country:d.country_name||''};
+  }catch(_){}
+})();
+
+/* ═══════════════════════════════════════
+   FISHER-YATES SHUFFLE
+═══════════════════════════════════════ */
+function shuffle(a){
+  for(let i=a.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+</script>
+</body>
+</html>
